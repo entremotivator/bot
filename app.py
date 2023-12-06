@@ -8,7 +8,7 @@ from trulens_eval.tru_custom_app import instrument
 import numpy as np
 from openai import OpenAI
 
-os.environ['GOOGLE_API_KEY'] =  'AIzaSyAANEPA1UF6WE4O_0GQh2s27iBT4VrN0Ag'
+os.environ['GOOGLE_API_KEY'] =  'AIzaSyBoDLrW7mlRF7gYosxChSSB1uVncL9OSCA'
 
 # Set up TruLens feedback functions
 fopenai = fOpenAI()
