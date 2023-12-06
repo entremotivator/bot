@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+from vertexai.language_models import TextGenerationModel
 from trulens_eval import TruCustomApp, Feedback, Select
 from trulens_eval.feedback import Groundedness
 from trulens_eval.feedback.provider.openai import OpenAI as fOpenAI
@@ -9,7 +10,7 @@ from openai import OpenAI
 
 # Set up TruLens feedback functions
 fopenai = fOpenAI()
-grounded = Groundedness(groundedness_provider=fopenai)  # Use the correct variable name
+grounded = Groundedness(groundedness_provider=fopenai)
 
 f_groundedness = (
     Feedback(grounded.groundedness_measure_with_cot_reasons, name="Groundedness")
@@ -42,7 +43,7 @@ rag = RAG_from_scratch()
 tru_rag = TruCustomApp(rag, app_id='RAG v1', feedbacks=[f_groundedness, f_qa_relevance, f_context_relevance])
 
 # Create Streamlit app
-st.title("RAG with TruLens and Palm 2 Chatbot")
+st.title("RAG with TruLens and VertexAI Text Generation")
 
 # Define the Streamlit app function
 def main():
@@ -55,9 +56,20 @@ def main():
         with tru_rag as recording:
             response = rag.query(query)
 
+        # Use VertexAI Text Generation Model
+        vertexai_parameters = {
+            "candidate_count": 1,
+            "max_output_tokens": 1024,
+            "temperature": 0.2,
+            "top_p": 0.8,
+            "top_k": 40
+        }
+        vertexai_model = TextGenerationModel.from_pretrained("text-bison")
+        vertexai_response = vertexai_model.predict(response, **vertexai_parameters)
+
         # Display the response
-        st.subheader("Answer:")
-        st.write(response)
+        st.subheader("Answer from VertexAI Text Generation:")
+        st.write(vertexai_response.text)
 
 # Run the Streamlit app
 if __name__ == "__main__":
