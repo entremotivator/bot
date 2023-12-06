@@ -30,6 +30,51 @@ about their applications and implementations."""
 # Print the GPT report card information
 print(GPT_reportcard)
 
+# Set up TruLens
+tru = Tru()
+
+# Define the RAG class
+class RAG_from_scratch:
+    @instrument
+    def retrieve(self, query: str) -> list:
+        """
+        Retrieve relevant text from vector store.
+        """
+        results = vector_store.query(
+            query_texts=query,
+            n_results=2
+        )
+        return results['documents'][0]
+
+    @instrument
+    def generate_completion(self, query: str, context_str: list) -> str:
+        """
+        Generate answer from context.
+        """
+        completion = oai_client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            temperature=0,
+            messages=[
+                {"role": "user",
+                 "content":
+                     f"We have provided context information below. \n"
+                     f"---------------------\n"
+                     f"{context_str}"
+                     f"\n---------------------\n"
+                     f"Given this information, please answer the question: {query}"
+                 }
+            ]
+        ).choices[0].message.content
+        return completion
+
+    @instrument
+    def query(self, query: str) -> str:
+        context_str = self.retrieve(query)
+        completion = self.generate_completion(query, context_str)
+        return completion
+
+rag = RAG_from_scratch()
+
 
 # Set up TruLens feedback functions
 fopenai = fOpenAI()
@@ -60,12 +105,35 @@ os.environ["OPENAI_API_KEY"] = "sk-1XKmMfjj7LzR6x9uIn2UT3BlbkFJ8tq2XVzuw1o1r4pOA
 # Pass the API key directly
 # Assuming the rest of your code remains the same...
 
-# Wrap the custom RAG with TruCustomApp
-rag = RAG_from_scratch()
-tru_rag = TruCustomApp(rag, app_id='RAG v1', feedbacks=[f_groundedness, f_qa_relevance, f_context_relevance])
+# Question/answer relevance between overall question and answer.
+f_qa_relevance = (
+    Feedback(fopenai.relevance_with_cot_reasons, name="Answer Relevance")
+    .on(Select.RecordCalls.retrieve.args.query)
+    .on_output()
+)
 
-# Create Streamlit app
-st.title("RAG with TruLens and VertexAI Text Generation")
+# Question/statement relevance between question and each context chunk.
+f_context_relevance = (
+    Feedback(fopenai.qs_relevance_with_cot_reasons, name="Context Relevance")
+    .on(Select.RecordCalls.retrieve.args.query)
+    .on(Select.RecordCalls.retrieve.rets.collect())
+    .aggregate(np.mean)
+)
+
+
+# Wrap the custom RAG with TruCustomApp
+# Construct the app
+tru_rag = TruCustomApp(rag,
+                      app_id='RAG v1',
+                      feedbacks=[f_groundedness, f_qa_relevance, f_context_relevance])
+
+# Run the app
+with tru_rag as recording:
+    rag.query("When was the University of Washington founded?")
+
+# Display leaderboard
+st.write(tru.get_leaderboard(app_ids=["RAG v1"]))
+
 
 # Define the Streamlit app function
 def main():
@@ -93,7 +161,10 @@ def main():
         st.subheader("Answer from VertexAI Text Generation:")
         st.write(vertexai_response.text)
 
+
+tru.run_dashboard()
+
 # Run the Streamlit app
-if __name__ == "__main__":
+    if __name__ == "__main__":
     main()
 
