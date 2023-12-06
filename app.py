@@ -8,6 +8,7 @@ from trulens_eval.tru_custom_app import instrument
 from openai import OpenAI
 from trulens_eval import TruCustomApp, Feedback, Select
 from trulens_eval.feedback import Groundedness
+from trulens_eval.feedback.provider.endpoint.openai import OpenAIEndpoint
 from trulens_eval.feedback.provider.openai import OpenAI as fOpenAI
 from trulens_eval.tru_custom_app import instrument
 from langchain.document_loaders import PyPDFDirectoryLoader
