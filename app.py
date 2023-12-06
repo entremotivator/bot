@@ -9,7 +9,7 @@ from openai import OpenAI
 
 # Set up TruLens feedback functions
 fopenai = fOpenAI()
-grounded = Groundedness(groundedness_provider=fopenai)
+grounded = Groundedness(groundedness_provider=fopenai)  # Use the correct variable name
 
 f_groundedness = (
     Feedback(grounded.groundedness_measure_with_cot_reasons, name="Groundedness")
@@ -33,7 +33,7 @@ f_context_relevance = (
 
 # Create RAG model and set up TruCustomApp
 os.environ["OPENAI_API_KEY"] = "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"
-oai_client = OpenAI()
+oai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])  # Pass the API key directly
 
 # Assuming the rest of your code remains the same...
 
