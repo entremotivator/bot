@@ -1,72 +1,33 @@
 import streamlit as st
-import pandas as pd
-from backend.functions import *
+import anthropic
 
-# page setup
-st.set_page_config(
-    page_title="Movie Recommendation With PaLM-2",
-    page_icon="🤖",
-    layout="wide",
-    initial_sidebar_state="expanded",
+with st.sidebar:
+    anthropic_api_key = st.text_input("Anthropic API Key", key="file_qa_api_key", type="password")
+    "[View the source code](https://github.com/streamlit/llm-examples/blob/main/pages/1_File_Q%26A.py)"
+    "[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/streamlit/llm-examples?quickstart=1)"
+
+st.title("📝 File Q&A with Anthropic")
+uploaded_file = st.file_uploader("Upload an article", type=("txt", "md"))
+question = st.text_input(
+    "Ask something about the article",
+    placeholder="Can you give me a short summary?",
+    disabled=not uploaded_file,
 )
 
-# sidebar
-with st.sidebar:
-    st.title("🍿 Movie Recommendation With PaLM-2")
-    st.sidebar.caption("MIT License © 2023 keanteng")
-    with st.expander("PaLM-2 API", expanded=True):
-        api_toggle = st.toggle("Enable PaLM-2 API", value=False)
-        api_input = st.text_input(
-            "PaLM-2 API Token",
-            type="password",
-            placeholder="Enter your PaLM-2 API token here",
-        )
+if uploaded_file and question and not anthropic_api_key:
+    st.info("Please add your Anthropic API key to continue.")
 
+if uploaded_file and question and anthropic_api_key:
+    article = uploaded_file.read().decode()
+    prompt = f"""{anthropic.HUMAN_PROMPT} Here's an article:\n\n<article>
+    {article}\n\n</article>\n\n{question}{anthropic.AI_PROMPT}"""
 
-# main page
-
-## load data
-movie_data = pd.read_excel("data.xlsx")
-
-## configure API
-if api_toggle:
-    api_configure(api_key=api_input)
-else:
-    api_configure(api_key=AIzaSyAANEPA1UF6WE4O_0GQh2s27iBT4VrN0Ag)
-
-# chat history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        if is_valid_json(message["content"]) == True:
-            temp = message["content"]
-            temp = json_to_frame(message["content"])
-            st.dataframe(temp, hide_index=True)
-        else:
-            st.markdown(message["content"])
-
-# chatbot
-prompt = st.chat_input("Enter your prompt here")
-
-## workflow
-model = load_llm()
-movie_data = data_processing(movie_data)
-
-with st.chat_message(name="AI", avatar="🎬"):
-    st.write(
-        "Share your thoughts on a movie you like, and I'll recommend you a movie you might like!"
+    client = anthropic.Client(api_key=anthropic_api_key)
+    response = client.completions.create(
+        prompt=prompt,
+        stop_sequences=[anthropic.HUMAN_PROMPT],
+        model="claude-v1", #"claude-2" for Claude 2 model
+        max_tokens_to_sample=100,
     )
-
-if prompt:
-    # Display user message in chat message container
-    st.chat_message("user").markdown(prompt)
-    to_llm = prompt_processing(prompt, movie_data)
-    response = llm_agent(prompt=to_llm, model=model)
-    response_df = json_to_frame(response)
-    st.chat_message("assistant").dataframe(response_df, hide_index=True)
-
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    st.write("### Answer")
+    st.write(response.completion)
