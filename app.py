@@ -2,6 +2,8 @@ import os
 import streamlit as st
 import google.generativeai as palm
 import openai
+import chromadb
+from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 from openai import OpenAI
 from trulens_eval import TruCustomApp, Feedback, Select
 from trulens_eval.feedback import Groundedness
@@ -15,6 +17,32 @@ from langchain.vectorstores import Pinecone
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 import numpy as np
+
+# Sample data for GPT report card
+GPT_reportcard = """The GPT Report Card is a comprehensive evaluation tool designed to assess the performance 
+of various language models and artificial intelligence agents. It provides valuable insights into the 
+capabilities of these models across different domains and tasks. This report card aims to facilitate 
+testing, analysis, and comparison of AI language models, enabling users to make informed decisions 
+about their applications and implementations."""
+
+# Print the GPT report card information
+print(GPT_reportcard)
+
+oai_client.embeddings.create(
+        model="text-embedding-ada-002",
+        input=GPT_reportcard
+    )
+import chromadb
+from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
+
+
+embedding_function = OpenAIEmbeddingFunction(api_key=os.environ.get('OPENAI_API_KEY'),
+                                             model_name="text-embedding-ada-002")
+
+
+chroma_client = chromadb.PersistentClient(path="./chromadb")
+vector_store = chroma_client.get_or_create_collection(name="reportcards",
+                                                      embedding_function=embedding_function)
 
 # Create RAG model and set up TruCustomApp
 os.environ["OPENAI_API_KEY"] = "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"
