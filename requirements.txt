@@ -3,3 +3,7 @@ trulens_eval==0.18.2
 chromadb==0.4.18
 openai==1.3.7
 numpy>=1.23.5
+google-generativeai
+langchain
+PyPDF2
+faiss-cpu
