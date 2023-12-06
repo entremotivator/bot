@@ -1,6 +1,8 @@
 import os
 import streamlit as st
 import google.generativeai as palm
+import openai
+from openai import OpenAI
 from trulens_eval import TruCustomApp, Feedback, Select
 from trulens_eval.feedback import Groundedness
 from trulens_eval.feedback.provider.openai import OpenAI as fOpenAI
