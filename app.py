@@ -5,7 +5,6 @@ import openai
 import sqlite3
 from trulens_eval import Tru
 from trulens_eval.tru_custom_app import instrument
-from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 from openai import OpenAI
 from trulens_eval import TruCustomApp, Feedback, Select
 from trulens_eval.feedback import Groundedness
