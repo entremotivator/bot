@@ -35,7 +35,7 @@ from trulens_eval import Tru
 from trulens_eval.tru_custom_app import instrument
 from openai import OpenAI
 
-os.environ["OPENAI_API_KEY"] = "sk-..."  # Replace with your OpenAI API key
+os.environ["OPENAI_API_KEY"] = "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"  # Replace with your OpenAI API key
 oai_client = OpenAI()
 
 university_info = """The University of Washington, founded in 1861 in Seattle, is a public research university
