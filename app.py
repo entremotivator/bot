@@ -79,7 +79,6 @@ with st.sidebar:
 # Trulens integration
 class RAG_from_scratch:
     # ... (your existing RAG_from_scratch class)
-
 fopenai = fOpenAI()
 grounded = Groundedness(groundedness_provider=fopenai)
 f_groundedness = (
