@@ -55,6 +55,9 @@ f_context_relevance = (
     .aggregate(np.mean)
 )
 
+# Create RAG model and set up TruCustomApp
+os.environ["OPENAI_API_KEY"] = "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"
+oai_client = OpenAI(api_key="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")  # Pass the API key directly
 # Assuming the rest of your code remains the same...
 
 # Wrap the custom RAG with TruCustomApp
