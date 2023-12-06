@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import json
 from backend.functions import *
 
 # page setup
