@@ -1,5 +1,5 @@
 import streamlit as st
-from PyPDF2 import PdfReader, PdfReadError
+from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import google.generativeai as palm
 from langchain.embeddings import GooglePalmEmbeddings
