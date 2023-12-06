@@ -5,6 +5,11 @@ from trulens_eval import TruCustomApp, Feedback, Select
 from trulens_eval.feedback import Groundedness
 from trulens_eval.feedback.provider.openai import OpenAI as fOpenAI
 from trulens_eval.tru_custom_app import instrument
+from langchain.embeddings import GooglePalmEmbeddings
+from langchain.llms import GooglePalm
+from langchain.vectorstores import FAISS
+from langchain.chains import ConversationalRetrievalChain
+from langchain.memory import ConversationBufferMemory
 import numpy as np
 from openai import OpenAI
 
