@@ -6,3 +6,5 @@ google-generativeai
 langchain
 PyPDF2
 faiss-cpu
+pandas
+json
