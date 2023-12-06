@@ -1,13 +1,15 @@
 import os
 import streamlit as st
-import vertexai
-from vertexai.language_models import TextGenerationModel
+import google.generativeai as palm
+from palm import TextGenerationModel
 from trulens_eval import TruCustomApp, Feedback, Select
 from trulens_eval.feedback import Groundedness
 from trulens_eval.feedback.provider.openai import OpenAI as fOpenAI
 from trulens_eval.tru_custom_app import instrument
 import numpy as np
 from openai import OpenAI
+
+os.environ['GOOGLE_API_KEY'] =  'AIzaSyAANEPA1UF6WE4O_0GQh2s27iBT4VrN0Ag'
 
 # Set up TruLens feedback functions
 fopenai = fOpenAI()
