@@ -7,4 +7,3 @@ google-generativeai
 langchain
 PyPDF2
 faiss-cpu
-sqlite3
