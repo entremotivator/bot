@@ -5,10 +5,11 @@ from trulens_eval.feedback import Groundedness
 from trulens_eval.feedback.provider.openai import OpenAI as fOpenAI
 from trulens_eval.tru_custom_app import instrument
 import numpy as np
+from openai import OpenAI  # Import OpenAI directly
 
 # Set up TruLens feedback functions
 fopenai = fOpenAI()
-grounded = Groundedness(groundedness_provider=fopenai)
+grounded = Groundedness(groundedness_provider=fopenai)  # Use the correct variable name
 
 f_groundedness = (
     Feedback(grounded.groundedness_measure_with_cot_reasons, name="Groundedness")
@@ -31,11 +32,7 @@ f_context_relevance = (
 )
 
 # Create RAG model and set up TruCustomApp
-from trulens_eval import Tru
-from trulens_eval.tru_custom_app import instrument
-from openai import OpenAI
-
-os.environ["OPENAI_API_KEY"] = "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"  # Replace with your OpenAI API key
+os.environ["OPENAI_API_KEY"] = "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"
 oai_client = OpenAI()
 
 university_info = """The University of Washington, founded in 1861 in Seattle, is a public research university
@@ -52,7 +49,7 @@ oai_client.embeddings.create(
 import chromadb
 from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 
-embedding_function = OpenAIEmbeddingFunction(api_key=os.environ.get('OPENAI_API_KEY'),
+embedding_function = OpenAIEmbeddingFunction(api_key=os.environ["OPENAI_API_KEY"],
                                              model_name="text-embedding-ada-002")
 
 chroma_client = chromadb.PersistentClient(path="./chromadb")
