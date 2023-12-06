@@ -33,7 +33,7 @@ movie_data = pd.read_excel("data.xlsx")
 if api_toggle:
     api_configure(api_key=api_input)
 else:
-    api_configure(api_key=PALM_TOKEN)
+    api_configure(api_key=AIzaSyAANEPA1UF6WE4O_0GQh2s27iBT4VrN0Ag)
 
 # chat history
 if "messages" not in st.session_state:
