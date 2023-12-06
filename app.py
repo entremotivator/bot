@@ -44,7 +44,7 @@ chroma_client = chromadb.PersistentClient(path="./chromadb")
 vector_store = chroma_client.get_or_create_collection(name="reportcards",
                                                       embedding_function=embedding_function)
 
-                 vector_store.add("reportcard_info", documents=GPT_reportcard)
+                 vector_store.add("GPT_reportcard, documents=GPT_reportcard)
                  
                  # Create RAG model and set up TruCustomApp
 os.environ["OPENAI_API_KEY"] = "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"
