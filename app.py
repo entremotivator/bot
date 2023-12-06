@@ -3,7 +3,7 @@ import streamlit as st
 import google.generativeai as palm
 from trulens_eval import TruCustomApp, Feedback, Select
 from trulens_eval.feedback import Groundedness
-from trulens_eval.feedback.provider.openai import palm as ppalm
+from trulens_eval.feedback.provider.openai import OpenAI as fOpenAI
 from trulens_eval.tru_custom_app import instrument
 from langchain.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -14,10 +14,12 @@ from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 import numpy as np
 
-os.environ['GOOGLE_API_KEY'] =  'AIzaSyBoDLrW7mlRF7gYosxChSSB1uVncL9OSCA'
+# Create RAG model and set up TruCustomApp
+os.environ["OPENAI_API_KEY"] = "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"
+oai_client = OpenAI(api_key=os.environ["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"])  # Pass the API key directly
 
 # Set up TruLens feedback functions
-ppalm = ppalm()
+fopenai = fOpenAI()
 grounded = Groundedness(groundedness_provider=fopenai)
 
 f_groundedness = (
@@ -39,9 +41,6 @@ f_context_relevance = (
     .on(Select.RecordCalls.retrieve.rets.collect())
     .aggregate(np.mean)
 )
-
-# Create RAG model and set up TruCustomApp
-os.environ["OPENAI_API_KEY"] = "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"
 
 # Assuming the rest of your code remains the same...
 
