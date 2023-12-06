@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+import vertexai
 from vertexai.language_models import TextGenerationModel
 from trulens_eval import TruCustomApp, Feedback, Select
 from trulens_eval.feedback import Groundedness
