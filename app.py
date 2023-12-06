@@ -12,12 +12,17 @@ import os
 os.environ['GOOGLE_API_KEY'] =  'AIzaSyAANEPA1UF6WE4O_0GQh2s27iBT4VrN0Ag'
 
 def get_pdf_text(pdf_docs):
-    text=""
-    for pdf in pdf_docs:
-        pdf_reader= PdfReader(pdf)
-        for page in pdf_reader.pages:
-            text+= page.extract_text()
-    return  text
+    text = ""
+    try:
+        for pdf in pdf_docs:
+            pdf_reader = PdfReader(pdf)
+            for page in pdf_reader.pages:
+                text += page.extract_text()
+    except PdfReadError as e:
+        st.error(f"Error reading PDF {pdf}: {e}")
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {e}")
+    return text
 
 def get_text_chunks(text):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20)
