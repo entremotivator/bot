@@ -2,7 +2,6 @@ import os
 import streamlit as st
 import google.generativeai as palm
 import openai
-import chromadb
 import sqlite3
 from trulens_eval import Tru
 from trulens_eval.tru_custom_app import instrument
@@ -40,7 +39,6 @@ embedding_function = OpenAIEmbeddingFunction(api_key=os.environ.get('OPENAI_API_
                                              model_name="text-embedding-ada-002")
 
 
-chroma_client = chromadb.PersistentClient(path="./chromadb")
 vector_store = chroma_client.get_or_create_collection(name="reportcards",
                                                       embedding_function=embedding_function)
 
@@ -50,47 +48,7 @@ vector_store.add("GPT_reportcard", documents=GPT_reportcard)
 os.environ["OPENAI_API_KEY"] = "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"
 oai_client = OpenAI(api_key="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")  # Pass the API key directly
 
-class RAG_from_scratch:
-    @instrument
-    def retrieve(self, query: str) -> list:
-        """
-        Retrieve relevant text from vector store.
-        """
-        results = vector_store.query(
-        query_texts=query,
-        n_results=2
-    )
-        return results['documents'][0]
 
-    @instrument
-    def generate_completion(self, query: str, context_str: list) -> str:
-        """
-        Generate answer from context.
-        """
-        completion = oai_client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        temperature=0,
-        messages=
-        [
-            {"role": "user",
-            "content": 
-            f"We have provided context information below. \n"
-            f"---------------------\n"
-            f"{context_str}"
-            f"\n---------------------\n"
-            f"Given this information, please answer the question: {query}"
-            }
-        ]
-        ).choices[0].message.content
-        return completion
-
-    @instrument
-    def query(self, query: str) -> str:
-        context_str = self.retrieve(query)
-        completion = self.generate_completion(query, context_str)
-        return completion
-
-rag = RAG_from_scratch()
 
 # Set up TruLens feedback functions
 fopenai = fOpenAI()
